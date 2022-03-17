@@ -1,0 +1,16 @@
+- name: Pull centos image
+  hosts: docker-private-repo-clients
+  become: yes
+
+  tasks:
+    - name: step 1- deploy portainer
+      community.docker.docker_container:
+        name: portainer
+        image: portainer/portainer-ce
+        ports:
+          - "9000:9000"
+          - "8000:8000"
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+          - portainer_data:/data
+        restart_policy: always

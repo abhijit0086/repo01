@@ -1,0 +1,22 @@
+---
+- name: install k8s
+  hosts: k8s_masternodes
+  become: yes
+
+  tasks:
+  - name: Step1- Copy file with owner and permission, using symbolic representation
+    copy:
+      src: ./files/01_all_nodes.sh
+      dest: /tmp/01_all_nodes.sh
+      owner: ansadmin
+      group: ansadmin
+      mode: u=rwx,g=r,o=r 
+
+  - name: Step2- run shellscript to install docker
+    shell: sh /tmp/01_all_nodes.sh | tee /tmp/output_01_all_nodes.txt
+
+  - fetch:
+      name: Step3- fetch consoleoutput file
+      src: /tmp/output_01_all_nodes.txt
+      dest: ./fetched/output_01_all_nodes.txt
+      flat: yes

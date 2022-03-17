@@ -1,0 +1,14 @@
+---
+- name: installing prometheus with GPU
+  hosts: prom_cpu_node
+  become: yes
+
+  task:
+  - name: Now create a node-exporter to pull cpu metrics
+    community.docker.docker_container:
+      name: node-exporter-node1
+      image: bitnami/node-exporter:latest
+      restart_policy: on-failure
+      ports:
+        # port -> host:container
+        - "9100:9100"

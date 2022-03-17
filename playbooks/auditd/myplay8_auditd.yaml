@@ -1,0 +1,47 @@
+---
+- name: installing auditd on servers
+  hosts: g-auditd
+  become: yes
+
+  tasks:
+  - name: Step1 - Update repositories cache and install "auditd" package
+    apt:
+      name: auditd
+      update_cache: yes
+  
+  - name: Step2 - Start service auditd, if not running
+    service:
+      name: auditd
+      state: started
+      enabled: yes
+
+  - name: Step3 - Setting rules of auditd for Systems
+    copy:
+      dest: "/etc/audit/audit.rules"
+      content: |
+        # This file contains the auditctl rules that are loaded
+        # whenever the audit daemon is started via the initscripts.
+        # The rules are simply the parameters that would be passed
+        # to auditctl.
+        # First rule - delete all
+        -D
+
+        # Increase the buffers to survive stress events.
+        # Make this bigger for busy systems
+        -b 1024
+        -a always,exit -S adjtimex -S settimeofday -S stime -k time-change
+        -a always,exit -S clock_settime -k time-change
+        -a always,exit -S sethostname -S setdomainname -k system-locale
+        -w /etc/group -p wa -k identity
+        -w /etc/passwd -p wa -k identity
+        -w /etc/shadow -p wa -k identity
+        -w /etc/sudoers -p wa -k identity
+        -w /var/run/utmp -p wa -k session
+        -w /var/log/wtmp -p wa -k session
+        -w /var/log/btmp -p wa -k session
+
+  - fetch:
+      src: /etc/audit/audit.rules
+      dest: /tmp/fetched/
+      flat: yes
+

@@ -1,0 +1,22 @@
+---
+- name: install k8s
+  hosts: k8s_workernodes
+  become: yes
+
+  tasks:
+  - name: Step1- Copy file with owner and permission, using symbolic representation
+    copy:
+      src: ./files/02_init_masternode_k8s.sh
+      dest: /tmp/02_init_masternode_k8s.sh
+      owner: ansadmin
+      group: ansadmin
+      mode: u=rwx,g=r,o=r 
+
+  - name: Step2- run shellscript to install docker
+    shell: sh /tmp/02_init_masternode_k8s.sh.sh | tee /tmp/output_02_init_masternode_k8s.txt
+
+  - fetch:
+      name: Step3- fetch consoleoutput file
+      src: /tmp/output_02_init_masternode_k8s.txt
+      dest: ./fetched/output_02_init_masternode_k8s.txt
+      flat: yes

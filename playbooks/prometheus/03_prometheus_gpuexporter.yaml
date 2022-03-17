@@ -1,0 +1,20 @@
+---
+- name: creating gpuexporter container
+  hosts: prom_gpu_nodes
+  become: yes
+
+  task:
+  - name: now create a gpu-exporter to pull gpu metrics
+    docker_container:
+      name: nvidia_smi_exporter
+      image: utkuozdemir/nvidia_gpu_exporter:0.2.0
+      restart_policy: on-failure
+      devices:
+      - "/dev/nvidiactl:/dev/nvidiactl"
+      - "/dev/nvidia0:/dev/nvidia0"
+      volumes:
+      - /usr/lib/x86_64-linux-gnu/libnvidia-ml.so:/usr/lib/x86_64-linux-gnu/libnvidia-ml.so
+      - /usr/lib/x86_64-linux-gnu/libnvidia-ml.so.1:/usr/lib/x86_64-linux-gnu/libnvidia-ml.so.1
+      - /usr/bin/nvidia-smi:/usr/bin/nvidia-smi
+      ports:
+      - "9835:9835"

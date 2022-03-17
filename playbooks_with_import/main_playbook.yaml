@@ -1,0 +1,36 @@
+---
+- name: installing nfs server
+  import_playbook: ../playbooks/nfs/myplay4_nfsserver.yaml
+  vars:
+    nfsclientip1: 72.31.15.31 #
+    nfsclientip2: 72.31.15.32
+  
+- name: configuring nfs clients & Set variables on an imported playbook
+  import_playbook: ../playbooks/nfs/myplay4-1_nfsclient.yaml
+  vars:
+    nfsserverprivip: 172.31.12.120
+
+
+# - name: installing private docker repo
+#   import_playbook: ../playbooks/docker-private-repo/p3_server_private_docker_repo.yaml
+#   vars:
+#     docker_repo_ip: 192.168.0.174
+#     server_hostname: docker.private.repo
+#     key_size: 4096
+#     private_key: domain.key
+#     csr: domain.csr
+#     certificate: domain.crt
+#     passphrase: # Set if you want passphrase
+#     key_type: RSA # Others include DSA, ECC, Ed25519, Ed448, X25519, X448
+#     country_name: IN
+#     email_address: automatonai@gmail.com
+#     organization_name: automaton
+
+# - name: configuring client for using private docker repo.
+#   import_playbook: ../playbooks/docker-private-repo/p3_client_private_docker_repo.yaml
+#   vars:
+#     docker_repo_ip: 192.168.0.174
+#     server_hostname: docker.private.repo
+#     private_key: domain.key
+#     csr: domain.csr
+#     certificate: domain.crt
